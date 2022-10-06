@@ -1,0 +1,79 @@
+VIDEO #4
+update and add a product
+To update a product, use "PUT"
+"PUT" the entire object and will replace an entire object
+If you just want to replace 1-2 fields in an object, that can't be done by put
+PUT introduces a different path convention
+NEW CONVENTION:
+How do we know what the ID is?
+For an update, send a put and resource URI will put it to an ID with a object, so we get the ID out of the URI
+
+In the PUT method:
+If we want to update any object, we need to know the object ID
+We need to decode this, the full path of the URL is actually in the http request
+To get the ID out of the entire URL:
+Use regexp: look up at go docs
+Why do we use string sub-match: If we have more than 1 ID in the URl, then we should bounce coz we have just 1 ID for 1 URl
+We get ID as a string from regexp, so need to convert string to integer
+
+We have redundancies in the get, add and update product functions, so we can create a seperate function for that
+
+VIDEO #5
+Rectifying code using gorilla fm and testify (by matt ryler)- types of go fm
+We are using too many methods and too many functions within methods.
+Refactoring the handlers code: using gorilla web tool: Best is MUX package
+Gorilla web frame work and MUX:
+No validating problem at multiple places in the code
+This can handle middleware also (extracts the validation part into a middleware)
+
+Replace the serveMUX in main.go with a rooter, also refactor handlers at the same time.
+Now we can register more detailed handlers in the route.
+We want to set the new router such that we should send only get requests to a particular http handler
+Use method on router, which gives a route filtered specifically for the http verb "get"
+SUB-ROUTER: We can define a sub-router for each method adn then we can be flexible with middleware
+The sub-router method on route converts a route into a router.
+With router, we can ad handlers on it
+We can add methods on a router
+Methods register a new route with a matcher for http methods. We can create a route which is only applicable to "get"
+and we can create our handlers on that
+Route can also be converted to a sub-router.
+The sub router named getrouter,
+Previously in the handler, we put the handling sub-routing stuff into servehttp, we delete it.
+
+SUB-ROUTER for PUT Request has to be created
+Update product originally took an id as input, now we can remove
+When we define a variable inside the URL, gorilla will extract them into collection called "mux.Vars"
+
+SUB-ROUTER for POST Request has to be created
+
+Validation has duplicate code, to remove:
+Put the entire code as a function OR Put it as a middleware
+MIDDLEWARE:
+The USE function: It allows us to apply middleware. Middleware is an http handler. Use this to chain multiple handlers
+together. Authentication is a good example.
+It returns an http handler.
+To use "Contexts" in go, we need to define a key. Use, Type "KeyProduct" struct.
+Implementing the middleware in main.go:
+A sub-router has a USE function, which takes middleware as input
+The middleware will get executed before the actual handler code
+Req from server --> picked up by router --> Router will send it to the proper sub-router --> goes to middleware --> then goes to handlefunc
+
+Replace the Update and Add products codes in handlers by
+TO cast an interface, safe feature, use data. function
+
+VIDEO #6
+Add a validation to our API using go-validator
+Validate the product declared in the product struct in product.go
+How to write small unit test in products test.go
+sku is like a product id, can be unique. To validate a sku, add own custom validation functions
+
+Video #7
+Documenting restful API's with swagger
+How to use swagger? Go Swagger. Swagger is kind of a format.
+Use swagger:meta tag to use goswagger library, which will generate docs
+make file documents stuff about api
+instead of running everytime, make use of a CI flow, put commands in a make file and later put them in readme
+
+
+
+
